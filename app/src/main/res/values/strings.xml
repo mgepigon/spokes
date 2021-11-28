@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Spokes</string>
     <string name="title_activity_maps">Spokes</string>
+    <string name="tracking">Tracking</string>
 </resources>
