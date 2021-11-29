@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "961039542520",
+    "project_id": "spokes-333500",
+    "storage_bucket": "spokes-333500.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961039542520:android:def3b533a5816d1557f30d",
+        "android_client_info": {
+          "package_name": "com.example.spokes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961039542520-kv19vakfrdqg2tnt23lnqg1apf8rb35m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.spokes",
+            "certificate_hash": "e16e4c78377529371b78693fd0c281d8c2cae35f"
+          }
+        },
+        {
+          "client_id": "961039542520-49rbkfsnadovn7kqk5a9ud9rcm8kee62.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlITXes6UvLMrQXoEbkC1hznEjbQGxwws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961039542520-49rbkfsnadovn7kqk5a9ud9rcm8kee62.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -292,7 +292,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return mTimeString;
     }
 
-    /** Firebase TODO: Need to figure out how to work this so everything is stored within app */
+    /** Firebase TODO: Need to figure out how to work this so everything is stored in cloud */
 
     /** Misc. Helper Functions */
     // Checks for multiple permissions at once
