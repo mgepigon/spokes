@@ -116,7 +116,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (mTracking){
                     mTrack.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
                     Log.d ("Tracked", "Distance: " + distance(mFinish, mStart));
-                    //Save all info switch activities to summary screen --> Firebase implementation / SharedPreferences
+                    //Save all info switch activities to summary screen --> put everything in an extra and access in SummaryActivity
                     mFinish = mCurrent;
                     mTime = 0; mDistance = 0; mTracking = false;
 
@@ -127,7 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Clear all text views
                     clearViews();
 
-                    //Go to trip summary --> put everything in an extra and access in SummaryActivity
+                    //Go to trip summary
                     Intent summary = new Intent(MapsActivity.this, SummaryActivity.class);
                     startActivity(summary);
                 }
