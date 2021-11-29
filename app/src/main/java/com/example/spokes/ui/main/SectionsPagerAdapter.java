@@ -25,7 +25,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         mContext = context;
     }
 
-    //When tab is clicked show that section
+    //When tab is clicked, show that section
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.

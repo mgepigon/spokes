@@ -16,7 +16,7 @@ import com.example.spokes.R;
 import com.example.spokes.databinding.FragmentSummaryBinding;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A placeholder fragment containing view for each tab clicked.
  */
 public class PlaceholderFragment extends Fragment {
 
@@ -33,7 +33,7 @@ public class PlaceholderFragment extends Fragment {
         return fragment;
     }
 
-    //Happens before onCreateView
+    //Happens before onCreateView, loads any savedInstance (which shouldn't happen)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,19 +46,22 @@ public class PlaceholderFragment extends Fragment {
         binding = FragmentSummaryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        //Create View based on Index
+        //Create View based on Index (textviews used as filler to make sure it's working)
         switch(getArguments().getInt(ARG_SECTION_NUMBER)){
             case 1:
+                //Textview of Distance, Time, Avg. Speed
                 TextView summary = binding.summary;
                 summary.setText("1");
                 break;
             case 2:
-               TextView route = binding.route;
+                //Map Fragment of Route from Database
+                TextView route = binding.route;
                 route.setText("2");
                 break;
             case 3:
-               TextView history = binding.history;
-               history.setText("3");
+                //Grab all trips from Database and display as ListView?
+                TextView history = binding.history;
+                history.setText("3");
                 break;
         }
         return root;

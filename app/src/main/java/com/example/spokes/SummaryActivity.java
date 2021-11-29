@@ -21,11 +21,11 @@ public class SummaryActivity extends AppCompatActivity {
 
     private ActivitySummaryBinding binding;
 
+    //Buttons
+    private boolean menuOpen;
     private FloatingActionButton mSave;
     private FloatingActionButton mBack;
     private FloatingActionButton mShow;
-
-    private boolean menuOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,16 @@ public class SummaryActivity extends AppCompatActivity {
         binding = ActivitySummaryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //Grab intent and extras containing all the information
+
+        //Setup of View
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
 
+        //Buttons setup
         menuOpen = false;
         //Show button
         mShow = binding.show;
@@ -54,7 +58,7 @@ public class SummaryActivity extends AppCompatActivity {
             }
         });
 
-        //Save button
+        //Save button --> add to database
         mSave = binding.save;
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override

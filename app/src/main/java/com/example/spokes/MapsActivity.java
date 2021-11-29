@@ -127,7 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Clear all text views
                     clearViews();
 
-                    //Go to trip summary
+                    //Go to trip summary --> put everything in an extra and access in SummaryActivity
                     Intent summary = new Intent(MapsActivity.this, SummaryActivity.class);
                     startActivity(summary);
                 }
@@ -181,7 +181,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onPause() {
         super.onPause();
-        //Needs to save everything to database
         //Stop location updates when inactive
         if (mFusedLocationClient != null){
             stopLocationUpdates();
