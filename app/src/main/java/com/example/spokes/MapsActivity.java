@@ -241,6 +241,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (mTracking){
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     //Find Speed in m/s
+                    //mDistance = distance(mCurrent, mStart);
                     mDistance = distance(mCurrent, mStart);
                     mSpeed = location.getSpeed();
                     //Update TextViews
@@ -252,11 +253,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
-    //Calculate Distance
+    //Calculate Distance (in meters)
     public double distance(Location to, Location from){
-        double lng = Math.pow((from.getLongitude() - to.getLongitude()), 2);
-        double lat = Math.pow((from.getLatitude() - to.getLatitude()), 2);
-        return Math.pow(lng+lat, (0.5));
+        return to.distanceTo(from);
     }
     //Draw Route
     public void drawRoute(List<Location> route){
