@@ -10,7 +10,6 @@
     <string name="back">back</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="summary">SUMMARY</string>
-    <string name="route">ROUTE</string>
+    <string name="summary">TRIP SUMMARY</string>
     <string name="history">HISTORY</string>
 </resources>

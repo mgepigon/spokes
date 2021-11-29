@@ -10,6 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/teal_700"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.33"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
@@ -18,36 +30,32 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabs" />
+            app:layout_constraintTop_toBottomOf="@+id/tabs" >
+
+        </androidx.viewpager.widget.ViewPager>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintEnd_toEndOf="@+id/toolbar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
             app:tabBackground="@color/teal_700"
-            app:tabSelectedTextColor="#FFFFFF"
-            app:tabIndicatorColor="#FFFFFF">
+            app:tabIndicatorColor="#FFFFFF"
+            app:tabSelectedTextColor="#FFFFFF">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/summary"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/summary" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/route"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/route" />
-
-            <com.google.android.material.tabs.TabItem
                 android:id="@+id/history"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/history" />
         </com.google.android.material.tabs.TabLayout>

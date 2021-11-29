@@ -52,10 +52,6 @@ public class TripActivity extends AppCompatActivity {
 
         if(getIntent().getExtras() != null) {
             mTrip = (Trip) getIntent().getParcelableExtra("savedTrip");
-            //Sanity Check
-//            Log.d ("Tracked", "Distance: " + mTrip.getDistance());
-//            Log.d ("Tracked", "AvgSpeed: " + mTrip.getAvgSpeed());
-//            Log.d ("Tracked", "Route Size: " + mTrip.getRouteSize());
             // Put Current Trip into Firebase for use in Fragments
             Map<String, Object> trip = new HashMap<>();
             trip.put("Created", FieldValue.serverTimestamp());
@@ -64,7 +60,7 @@ public class TripActivity extends AppCompatActivity {
             trip.put("AvgSpeed", mTrip.getAvgSpeed());
             trip.put("Route", mTrip.getRoute());
 
-            // Add a new document with a generated ID
+            // Store into Database as "Current" trip
             mDatabase.collection("allTrips").document("current")
                     .set(trip)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -88,7 +84,6 @@ public class TripActivity extends AppCompatActivity {
         pageAdapter adapter = new pageAdapter(getSupportFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         adapter.addFragment(new summaryFragment(), "SUMMARY");
-        adapter.addFragment(new routeFragment(), "ROUTE");
         adapter.addFragment(new historyFragment(), "HISTORY");
         mViewPager.setAdapter(adapter);
 
@@ -164,7 +159,6 @@ public class TripActivity extends AppCompatActivity {
             }
         });
     }
-
 
     //Menu Animations
     private void showMenu(){
