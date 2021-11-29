@@ -2,4 +2,10 @@
     <string name="app_name">Spokes</string>
     <string name="title_activity_maps">Spokes</string>
     <string name="tracking">Tracking</string>
+    <string name="title_activity_summary">SummaryActivity</string>
+    <string name="tab_text_1">Summary</string>
+    <string name="tab_text_2">Route</string>
+    <string name="tab_text_3">History</string>
+    <string name="save">save</string>
+    <string name="back">back</string>
 </resources>

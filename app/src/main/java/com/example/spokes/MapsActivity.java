@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Camera;
@@ -39,6 +40,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.spokes.databinding.ActivityMapsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 import java.util.Locale;
@@ -78,12 +80,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //To Storage --> Firebase
     private List<Object> mMetrics;
+    private FirebaseFirestore mDatabase;
 
     /** Lifecycle Functions */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Connect to Firestore Database of app
+        mDatabase = FirebaseFirestore.getInstance();
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -121,7 +127,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Clear all text views
                     clearViews();
 
-
+                    //Go to trip summary
+                    Intent summary = new Intent(MapsActivity.this, SummaryActivity.class);
+                    startActivity(summary);
                 }
                 else{
                     //Start timer, distance, and speed tracking
@@ -167,11 +175,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume(){
         super.onResume();
         startLocationUpdates();
+        //Needs current location
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        //Needs to save everything to database
         //Stop location updates when inactive
         if (mFusedLocationClient != null){
             stopLocationUpdates();
