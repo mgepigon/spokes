@@ -44,7 +44,6 @@ import com.example.spokes.databinding.ActivityMapsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -115,8 +114,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Find Average Speed & add last location
                     mRoute.add(mCurrent);
                     mAvgSpeed = avg(mRoute);
-                    //Save all info switch activities to summary screen --> put everything in an extra and access in SummaryActivity
-                    Trip finishedTrip = new Trip(mDistance, mRoute, mAvgSpeed);
+                    //Save all info switch activities to summary screen --> put everything in an extra and access in TripActivity
+                    Trip finishedTrip = new Trip(mDistance, mAvgSpeed, mTimeString, mRoute);
 
                     //Reset Everything
                     mTime = 0; mDistance = 0; mTracking = false;

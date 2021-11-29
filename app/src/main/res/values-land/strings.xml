@@ -2,4 +2,6 @@
 <resources>
     <string name="save">save</string>
     <string name="back">back</string>
+    <string name="summary">SUMMARY</string>
+    <string name="history">HISTORY</string>
 </resources>
