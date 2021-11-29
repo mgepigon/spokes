@@ -20,10 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Spokes">
         <activity
-            android:name=".SummaryActivity"
-            android:exported="false"
-            android:label="@string/title_activity_summary"
-            android:theme="@style/Theme.Spokes.NoActionBar" />
+            android:name=".TripActivity"
+            android:exported="false" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

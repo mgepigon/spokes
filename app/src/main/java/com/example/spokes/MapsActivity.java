@@ -135,7 +135,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     clearViews();
 
                     //Go to trip summary
-                    Intent summary = new Intent(MapsActivity.this, SummaryActivity.class);
+                    Intent summary = new Intent(MapsActivity.this, TripActivity.class);
                     summary.putExtra("savedTrip", finishedTrip);
                     startActivity(summary);
                 }

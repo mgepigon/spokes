@@ -1,25 +1,21 @@
 package com.example.spokes;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
+public class TripActivity extends AppCompatActivity {
 
-import android.util.Log;
-import android.view.View;
-
-import com.example.spokes.ui.main.SectionsPagerAdapter;
-import com.example.spokes.databinding.ActivitySummaryBinding;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-public class SummaryActivity extends AppCompatActivity {
-
-    private ActivitySummaryBinding binding;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
 
     //Buttons
     private boolean menuOpen;
@@ -27,43 +23,28 @@ public class SummaryActivity extends AppCompatActivity {
     private FloatingActionButton mBack;
     private FloatingActionButton mShow;
 
-    //Trip
-    private Trip mTrip;
-
-    //Firebase
-    private FirebaseFirestore mDatabase;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_trip);
 
-        //Connect to Firestore Database of app
-        mDatabase = FirebaseFirestore.getInstance();
+        //Setup tabs & page adapter
+        mTabLayout = findViewById(R.id.tabs);
+        mViewPager = findViewById(R.id.view_pager);
+        mTabLayout.setupWithViewPager(mViewPager);
 
-        binding = ActivitySummaryBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        pageAdapter adapter = new pageAdapter(getSupportFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        adapter.addFragment(new summaryFragment(), "SUMMARY");
+        adapter.addFragment(new routeFragment(), "ROUTE");
+        adapter.addFragment(new historyFragment(), "HISTORY");
+        mViewPager.setAdapter(adapter);
 
-        //Grab intent and extras containing all the information
-        if(getIntent().getExtras() != null) {
-            mTrip = (Trip) getIntent().getParcelableExtra("savedTrip");
-
-            //Sanity Check
-//            Log.d ("Tracked", "Distance: " + mTrip.getDistance());
-//            Log.d ("Tracked", "AvgSpeed: " + mTrip.getAvgSpeed());
-//            Log.d ("Tracked", "Route Size: " + mTrip.getRouteSize());
-        }
-
-        //Setup of View
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
 
         //Buttons setup
         menuOpen = false;
         //Show button
-        mShow = binding.show;
+        mShow = findViewById(R.id.show);
         mShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +57,7 @@ public class SummaryActivity extends AppCompatActivity {
         });
 
         //Save button --> add to database
-        mSave = binding.save;
+        mSave = findViewById(R.id.save);
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,11 +67,11 @@ public class SummaryActivity extends AppCompatActivity {
         });
 
         //Back button
-        mBack = binding.back;
+        mBack = findViewById(R.id.back);
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent maps = new Intent(SummaryActivity.this, MapsActivity.class);
+                Intent maps = new Intent(TripActivity.this, MapsActivity.class);
                 startActivity(maps);
             }
         });
