@@ -19,6 +19,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -42,8 +44,10 @@ import com.example.spokes.databinding.ActivityMapsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -55,10 +59,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest mLocationRequest;
     private boolean mInitial;
-    private Marker mCurrentMarker;
-    private Location mStart;
     private Location mCurrent;
-    private Location mFinish;
 
     //Toolbar & Tracking Button
     private Toolbar mToolbar;
@@ -69,7 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView mDistView;
 
     //Tracking Variables
-    private double mSpeed;
+    private double mCurrSpeed;
     private double mDistance;
     private double mTime;
 
@@ -78,9 +79,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView mTimeView;
     private String mTimeString;
 
-    //To Storage --> Firebase
-    private List<Object> mMetrics;
-    private FirebaseFirestore mDatabase;
+    //To Storage --> Firebase in Other Activity
+    private List<Location> mRoute;
+    private double mAvgSpeed;
 
     /** Lifecycle Functions */
 
@@ -88,19 +89,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Connect to Firestore Database of app
-        mDatabase = FirebaseFirestore.getInstance();
-
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        //Setup Route Containing every Location Object in trip
+        mRoute = new Vector<Location>();
 
         //Toolbar setup
         mToolbar = findViewById(R.id.appToolbar);
         setSupportActionBar(mToolbar);
-
-        //Initialization
-        mStart = new Location("");
-        mFinish = new Location("");
 
         //Timer
         mTime = 0;
@@ -115,10 +112,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view){
                 if (mTracking){
                     mTrack.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
-                    Log.d ("Tracked", "Distance: " + distance(mFinish, mStart));
+                    //Find Average Speed & add last location
+                    mRoute.add(mCurrent);
+                    mAvgSpeed = avg(mRoute);
                     //Save all info switch activities to summary screen --> put everything in an extra and access in SummaryActivity
-                    mFinish = mCurrent;
+                    Trip finishedTrip = new Trip(mDistance, mRoute, mAvgSpeed);
+
+                    //Reset Everything
                     mTime = 0; mDistance = 0; mTracking = false;
+                    mRoute.clear();
+
+                    //Sanity Check
+                    Log.d ("Tracked", "Distance: " + finishedTrip.getDistance());
+                    Log.d ("Tracked", "AvgSpeed: " + finishedTrip.getAvgSpeed());
+                    Log.d ("Tracked", "Route Size: " + finishedTrip.getRouteSize());
 
                     //Revert Map Settings
                     mMap.getUiSettings().setAllGesturesEnabled(true);
@@ -129,6 +136,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //Go to trip summary
                     Intent summary = new Intent(MapsActivity.this, SummaryActivity.class);
+                    summary.putExtra("savedTrip", finishedTrip);
                     startActivity(summary);
                 }
                 else{
@@ -146,9 +154,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mMap.getUiSettings().setCompassEnabled(false);
                     mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-                    mStart = mCurrent;
+                    //Starting Location
+                    mRoute.add(mCurrent);
                     //Update TextViews
-                    mSpeedView.setText(getSpeed(mSpeed));
+                    mSpeedView.setText(getSpeed(mCurrSpeed));
                     mDistView.setText(getDistance(mDistance));
                     mTracking = true;
 
@@ -249,14 +258,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if (mTracking){
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    //Find Speed in m/s
-                    //mDistance = distance(mCurrent, mStart);
-                    mDistance = distance(mCurrent, mStart);
-                    mSpeed = location.getSpeed();
+                    //Find speed in m/s & distance from Start TODO: Need better measurement of distance
+                    mDistance = distance(mCurrent, mRoute.get(0));
+                    mCurrSpeed = location.getSpeed();
                     //Update TextViews
-                    mSpeedView.setText(getSpeed(mSpeed));
+                    mSpeedView.setText(getSpeed(mCurrSpeed));
                     mDistView.setText(getDistance(mDistance));
-                    Log.d ("Tracked", "Distance: " + mDistance);
                 }
             }
         }
@@ -278,9 +285,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void run() {
                 // Increment if tracking
                 if (mTracking) {
+                    //Grab speed and location for safekeeping
+                    if (mTime%3 == 0){
+                        Log.d ("Tracked", "Added Speed: " + mCurrSpeed);
+                        Log.d ("Tracked", "Added Location: " + mCurrent);
+                        Log.d ("Tracked", "Added Location: " + mRoute.size());
+                        mRoute.add(mCurrent);
+                    }
                     // Set the text
                     mTimeView.setText(getTime(mTime));
                     mTime++;
+
                 }
                 mTimeHandler.postDelayed(this, 1000);
             }
@@ -303,7 +318,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /** Firebase TODO: Need to figure out how to work this so everything is stored in cloud */
 
-    /** Misc. Helper Functions */
+    /** Misc. Helper Functions*/
+
+    public double avg(List<Location> route){
+        double result = 0;
+        if (!route.isEmpty()){
+            for (Location location: route){
+                result+=location.getSpeed();
+            }
+            return result/route.size();
+        }
+        return result;
+    }
+
     // Checks for multiple permissions at once
     public static boolean hasPermissions(Context context, String... permissions) {
         if (context != null && permissions != null) {

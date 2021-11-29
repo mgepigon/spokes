@@ -46,7 +46,7 @@ public class PlaceholderFragment extends Fragment {
         binding = FragmentSummaryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        //Create View based on Index (textviews used as filler to make sure it's working)
+        //Create View based on Index (Textviews used as filler to make sure it's working)
         switch(getArguments().getInt(ARG_SECTION_NUMBER)){
             case 1:
                 //Textview of Distance, Time, Avg. Speed

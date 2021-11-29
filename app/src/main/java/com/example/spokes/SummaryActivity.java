@@ -10,12 +10,12 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 
 import com.example.spokes.ui.main.SectionsPagerAdapter;
 import com.example.spokes.databinding.ActivitySummaryBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SummaryActivity extends AppCompatActivity {
 
@@ -27,14 +27,31 @@ public class SummaryActivity extends AppCompatActivity {
     private FloatingActionButton mBack;
     private FloatingActionButton mShow;
 
+    //Trip
+    private Trip mTrip;
+
+    //Firebase
+    private FirebaseFirestore mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Connect to Firestore Database of app
+        mDatabase = FirebaseFirestore.getInstance();
 
         binding = ActivitySummaryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         //Grab intent and extras containing all the information
+        if(getIntent().getExtras() != null) {
+            mTrip = (Trip) getIntent().getParcelableExtra("savedTrip");
+
+            //Sanity Check
+//            Log.d ("Tracked", "Distance: " + mTrip.getDistance());
+//            Log.d ("Tracked", "AvgSpeed: " + mTrip.getAvgSpeed());
+//            Log.d ("Tracked", "Route Size: " + mTrip.getRouteSize());
+        }
 
         //Setup of View
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
@@ -79,6 +96,8 @@ public class SummaryActivity extends AppCompatActivity {
         });
     }
 
+
+    //Menu Animations
     private void showMenu(){
         menuOpen=true;
         mBack.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
