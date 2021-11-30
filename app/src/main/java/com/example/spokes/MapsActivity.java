@@ -151,6 +151,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Start timer, distance, and speed tracking
 
                     //Change button color  TODO: make into a stop button
+                    mTrack.setImageResource(android.R.drawable.ic_media_pause);
                     mTrack.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
                     //Change camera position TODO: camera tracking to where phone is facing
                     LatLng latLng = new LatLng(mCurrent.getLatitude(), mCurrent.getLongitude());

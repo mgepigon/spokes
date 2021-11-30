@@ -52,20 +52,20 @@
             android:layout_height="match_parent"
             tools:context=".MapsActivity" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/track"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/appBotToolbar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="-20dp"
-            android:clickable="true"
-            android:elevation="1dp"
-            android:src="@android:drawable/ic_media_play"
-            app:backgroundTint="@color/teal_200"
-            app:fabSize="auto"
-            android:contentDescription="@string/tracking"
-            android:focusable="true" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/track"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/appBotToolbar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="-20dp"
+                android:clickable="true"
+                android:contentDescription="@string/tracking"
+                android:elevation="1dp"
+                android:focusable="true"
+                android:src="@android:drawable/ic_media_play"
+                app:backgroundTint="@color/teal_200"
+                app:fabSize="auto" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/appBotToolbar"
