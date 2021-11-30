@@ -1,5 +1,6 @@
 package com.example.spokes;
 
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,6 +35,8 @@ public class summaryFragment extends Fragment {
     //Database
     FirebaseFirestore mDatabase;
 
+    //TODO: setup map to show all locations in route array and draw route using lines?
+    //TODO: change font of textviews for aesthetics
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -74,5 +78,9 @@ public class summaryFragment extends Fragment {
     public String getSpeed(double speed){
         //Use activity recognition to get more accurate results (if time permits)
         return String.format(Locale.getDefault(), "%.2f m/s", speed);
+    }
+
+    //Draw Route
+    public void drawRoute(List<Location> route){
     }
 }

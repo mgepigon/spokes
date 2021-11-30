@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class historyFragment extends Fragment {
-
+    //TODO setup a scrollable listview and grab history from Firestore
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

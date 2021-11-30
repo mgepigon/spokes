@@ -7,13 +7,14 @@ import android.os.Parcelable;
 import java.util.List;
 import java.util.Vector;
 
-//Trip Class --> should be the one put into extra
+//Trip Class (this is what gets put into the database)
 public class Trip implements Parcelable {
     private double Distance;
     private double avgSpeed;
     private List<Location> Route;
     private String Time;
 
+    //Constructor
     public Trip(double distance, double speed, String time, List<Location> route){
         this.Distance = distance;
         this.avgSpeed = speed;
@@ -21,6 +22,7 @@ public class Trip implements Parcelable {
         this.Route = new Vector<Location>(route);
     }
 
+    //Some Parcelable setup that took forever, still don't understand this
     protected Trip(Parcel in){
         Distance = in.readDouble();
         avgSpeed = in.readDouble();
@@ -54,6 +56,7 @@ public class Trip implements Parcelable {
         dest.writeList(Route);
     }
 
+    //Getters
     public double getDistance(){
         return this.Distance;
     }
@@ -66,7 +69,6 @@ public class Trip implements Parcelable {
     public String getTime(){
         return this.Time;
     }
-
     public List<Location> getRoute() {
         return this.Route;
     }

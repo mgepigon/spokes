@@ -60,7 +60,7 @@ public class TripActivity extends AppCompatActivity {
             trip.put("AvgSpeed", mTrip.getAvgSpeed());
             trip.put("Route", mTrip.getRoute());
 
-            // Store into Database as "Current" trip
+            //Add the current trip to allTrips collection
             mDatabase.collection("allTrips").document("current")
                     .set(trip)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -102,14 +102,14 @@ public class TripActivity extends AppCompatActivity {
             }
         });
 
-        //Save button --> add to database
+        //Save button
         mSave = findViewById(R.id.save);
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Saved to Database", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
-                // Create a trip into Firebase
+                // Create a hashmap of trip to be added to database
                 Map<String, Object> trip = new HashMap<>();
                 trip.put("Created", FieldValue.serverTimestamp());
                 trip.put("TimeTraveled", mTrip.getTime());
@@ -117,7 +117,7 @@ public class TripActivity extends AppCompatActivity {
                 trip.put("AvgSpeed", mTrip.getAvgSpeed());
                 trip.put("Route", mTrip.getRoute());
 
-                // Add to history
+                // Add trip to history in allTrips collection
                 mDatabase.collection("allTrips").document("history")
                         .set(trip)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -154,6 +154,7 @@ public class TripActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error deleting document", e);
                             }
                         });
+                //Go back to previous activity
                 Intent maps = new Intent(TripActivity.this, MapsActivity.class);
                 startActivity(maps);
             }
@@ -166,7 +167,6 @@ public class TripActivity extends AppCompatActivity {
         mBack.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
         mSave.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
     }
-
     private void closeMenu(){
         menuOpen=false;
         mBack.animate().translationY(0);
