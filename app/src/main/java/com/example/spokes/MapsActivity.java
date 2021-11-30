@@ -271,7 +271,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Find speed in m/s & distance from Start
                     //TODO: distance calculation should be accumulation of each displacement per location,
                     // right now it's just displacement from current and the start
-                    //verifying TODO completion
+                    //verifying completion
                     if(mLast == null) {
                         mDistance = distance(mCurrent, mRoute.get(0));
                         Log.d("mTracking", "null");
