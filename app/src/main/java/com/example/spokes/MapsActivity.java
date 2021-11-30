@@ -59,6 +59,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest mLocationRequest;
     private boolean mInitial;
     private Location mCurrent;
+    private Location mLast;
 
     //Toolbar & Tracking Button
     private Toolbar mToolbar;
@@ -270,12 +271,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Find speed in m/s & distance from Start
                     //TODO: distance calculation should be accumulation of each displacement per location,
                     // right now it's just displacement from current and the start
-                    mDistance = distance(mCurrent, mRoute.get(0));
+
+                    if(mLast == null) {
+                        mDistance = distance(mCurrent, mRoute.get(0));
+                        Log.d("mTracking", "null");
+                    }
+                    else
+                        mDistance = mDistance + distance(mCurrent, mLast);
+
+                    //mDistance = distance(mCurrent, mRoute.get(0));
                     mRoute.add(mCurrent);
                     mCurrSpeed = location.getSpeed();
                     //Update TextViews
                     mSpeedView.setText(getSpeed(mCurrSpeed));
                     mDistView.setText(getDistance(mDistance));
+
+                    mLast = mCurrent;
                 }
             }
         }
