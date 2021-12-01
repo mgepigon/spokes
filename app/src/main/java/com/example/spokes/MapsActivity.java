@@ -153,12 +153,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //Change button color  TODO: make into a stop button
                     mTrack.setImageResource(android.R.drawable.ic_media_pause);
                     mTrack.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                    //Change camera position TODO: camera tracking to where phone is facing
+
                     LatLng latLng = new LatLng(mCurrent.getLatitude(), mCurrent.getLongitude());
+                    Log.d ("Camera", "" + mCurrent.getBearing());
                     CameraPosition mCamera = new CameraPosition.Builder()
                             .target(latLng)
                             .zoom(18)
                             .tilt(40)
+                            .bearing(mCurrent.getBearing())
                             .build();
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCamera));
                     mMap.getUiSettings().setAllGesturesEnabled(false);
@@ -235,7 +237,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(100);
         mLocationRequest.setFastestInterval(0);
-        mLocationRequest.setSmallestDisplacement(5);
+        //mLocationRequest.setSmallestDisplacement(5);  //commented out to make camera bearing work
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         //Start Location callback
@@ -269,6 +271,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //When tracking make camera follow movement -- store locations into Route, update views
                 if (mTracking){
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    //Change camera position TODO: camera tracking to where phone is facing
+                    CameraPosition mCamera = new CameraPosition.Builder()
+                            .target(latLng)
+                            .zoom(18)
+                            .tilt(40)
+                            .bearing(mCurrent.getBearing())
+                            .build();
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCamera));
+
                     //Find speed in m/s & distance from Start
                     //TODO: distance calculation should be accumulation of each displacement per location,
                     // right now it's just displacement from current and the start
