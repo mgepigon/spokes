@@ -1,5 +1,6 @@
 package com.example.spokes;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -12,6 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CustomCap;
+import com.google.android.gms.maps.model.JointType;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -20,9 +32,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 public class summaryFragment extends Fragment {
 
@@ -31,6 +45,12 @@ public class summaryFragment extends Fragment {
     TextView mTime;
     TextView mDistance;
     TextView mSpeed;
+
+    SupportMapFragment mapFragment;
+
+    private List<LatLng> mRoute = new ArrayList<>();
+
+    private static final int POLYLINE_STROKE_WIDTH_PX = 12;
 
     //Database
     FirebaseFirestore mDatabase;
@@ -47,6 +67,8 @@ public class summaryFragment extends Fragment {
         mTime = (TextView) v.findViewById(R.id.timeSummary);
         mDistance = (TextView) v.findViewById(R.id.distanceSummary);
         mSpeed = (TextView) v.findViewById(R.id.avgSpeedSummary);
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapSummary);
+
 
         mDatabase = FirebaseFirestore.getInstance();
         DocumentReference docRef = mDatabase.collection("allTrips").document("current");
@@ -61,6 +83,40 @@ public class summaryFragment extends Fragment {
                         mTime.setText((String) currentTrip.get("TimeTraveled"));
                         mDistance.setText(getDistance((double) currentTrip.get("DistanceTraveled")));
                         mSpeed.setText(getSpeed((double) currentTrip.get("AvgSpeed")));
+
+                        mapFragment.getMapAsync(new OnMapReadyCallback() {
+                            @Override
+                            public void onMapReady(@NonNull GoogleMap googleMap) {
+                                List<Object> locations = (List<Object>) currentTrip.get("Route");
+                                for (Object locationObj : locations) {
+                                    Map<String, Object> location = (Map<String, Object>) locationObj;
+                                    LatLng latLng = new LatLng((Double) location.get("latitude"), (Double) location.get("longitude"));
+                                    mRoute.add(latLng);
+                                }
+                                LatLng startLoc = mRoute.get(0);
+                                googleMap.addMarker(new MarkerOptions()
+                                        .icon(BitmapDescriptorFactory
+                                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                        .position(startLoc)
+                                        .title("Start Location"));
+                                LatLng endLoc = mRoute.get(mRoute.size()-1);
+                                googleMap.addMarker(new MarkerOptions()
+                                        .icon(BitmapDescriptorFactory
+                                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                        .position(endLoc)
+                                        .title("End Location"));
+                                LatLng midLoc = new LatLng((startLoc.latitude+endLoc.latitude)/2, (startLoc.longitude+endLoc.longitude)/2);
+                                googleMap.moveCamera(CameraUpdateFactory.newLatLng(midLoc));
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(midLoc, 15f));
+
+                                Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+                                        .clickable(false)
+                                        .addAll(mRoute));
+                                stylePolyline(polyline1);
+                            }
+                        });
+
+
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -81,6 +137,13 @@ public class summaryFragment extends Fragment {
     }
 
     //Draw Route
-    public void drawRoute(List<Location> route){
+    public void drawRoute(List<LatLng> route){
+
+    }
+
+    private void stylePolyline(Polyline polyline) {
+        polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
+        polyline.setColor(Color.RED);
+        polyline.setJointType(JointType.ROUND);
     }
 }
