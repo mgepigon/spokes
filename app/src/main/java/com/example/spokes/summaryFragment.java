@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
-
+/** Summary fragment showing the current trip summary */
 public class summaryFragment extends Fragment {
 
     private static final String TAG = "SummaryFragment" ;
@@ -50,6 +50,7 @@ public class summaryFragment extends Fragment {
 
     SupportMapFragment mapFragment;
 
+    //Route list used in creation of route on mapFragment
     private List<LatLng> mRoute = new ArrayList<>();
 
     private static final int POLYLINE_STROKE_WIDTH_PX = 12;
@@ -71,6 +72,7 @@ public class summaryFragment extends Fragment {
         mSpeed = (TextView) v.findViewById(R.id.avgSpeedSummary);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapSummary);
 
+        //Grab the current trip in the data base and display it
         mDatabase = FirebaseFirestore.getInstance();
         DocumentReference docRef = mDatabase.collection("allTrips").document("current");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -84,7 +86,7 @@ public class summaryFragment extends Fragment {
                         mTime.setText("Time Traveled: " + (String) currentTrip.get("TimeTraveled"));
                         mDistance.setText("Distance Traveled: " + getDistance((double) currentTrip.get("DistanceTraveled")));
                         mSpeed.setText("Avg Speed: " + getSpeed((double) currentTrip.get("AvgSpeed")));
-
+                        //Show the current route on mapFragment included
                         mapFragment.getMapAsync(new OnMapReadyCallback() {
                             @Override
                             public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -110,6 +112,7 @@ public class summaryFragment extends Fragment {
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(midLoc));
                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(midLoc, 15f));
 
+                                //Prevents the creation of two routes
                                 SharedPreferences sp = getContext().getSharedPreferences("sp1", Context.MODE_PRIVATE);
                                 added = sp.getBoolean("added", false);
                                 if(!added) {
@@ -135,14 +138,14 @@ public class summaryFragment extends Fragment {
         return v;
     }
 
+    //Helper functions for converting double parameters to strings
     public String getDistance(double distance){
-        return String.format(Locale.getDefault(), "%.2f m", distance);
+        return String.format(Locale.getDefault(), "%.2f mi", distance);
     }
     public String getSpeed(double speed){
-        //Use activity recognition to get more accurate results (if time permits)
-        return String.format(Locale.getDefault(), "%.2f m/s", speed);
+        return String.format(Locale.getDefault(), "%.2f mph", speed);
     }
-
+    //Draw parameters for route
     private void stylePolyline(Polyline polyline) {
         polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
         polyline.setColor(Color.RED);

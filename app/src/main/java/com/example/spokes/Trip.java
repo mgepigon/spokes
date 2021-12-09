@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-//Trip Class (this is what gets put into the database)
+/** Custom class called trip --> built as a parcelable */
 public class Trip implements Parcelable {
     private double Distance;
     private double avgSpeed;

@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Trip activity handles the page adapter holding the trip summary fragment
+ * and history along with database interaction*/
 public class TripActivity extends AppCompatActivity {
 
     private TabLayout mTabLayout;

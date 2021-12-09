@@ -66,7 +66,7 @@ public class historyFragment extends Fragment {
         adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, mTripArray);
         mHistoryList.setAdapter(adapter);
 
-        //Create history list
+        //Create history list using page adapter
         loadHistory();
 
         mHistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
