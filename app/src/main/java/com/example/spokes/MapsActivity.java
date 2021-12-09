@@ -150,7 +150,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else{
                     //Start timer, distance, and speed tracking
 
-                    //Change button color  TODO: make into a stop button
+                    //Change button color and image
                     mTrack.setImageResource(android.R.drawable.ic_media_pause);
                     mTrack.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
 
@@ -237,7 +237,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(100);
         mLocationRequest.setFastestInterval(0);
-        //mLocationRequest.setSmallestDisplacement(5);  //commented out to make camera bearing work
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         //Start Location callback
@@ -266,12 +265,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mInitial = false;
                 }
 
-                //TODO: use of activity detection package to detect that we're riding
-                // a bicycle (ON_BICYCLE) for better accuracy
                 //When tracking make camera follow movement -- store locations into Route, update views
                 if (mTracking){
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    //Change camera position TODO: camera tracking to where phone is facing
+                    //Change camera position
                     CameraPosition mCamera = new CameraPosition.Builder()
                             .target(latLng)
                             .zoom(18)
@@ -281,9 +278,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCamera));
 
                     //Find speed in m/s & distance from Start
-                    //TODO: distance calculation should be accumulation of each displacement per location,
-                    // right now it's just displacement from current and the start
-                    //verifying completion
                     if(mLast == null) {
                         mDistance = distance(mCurrent, mRoute.get(0));
                         Log.d("mTracking", "null");
@@ -291,7 +285,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     else
                         mDistance = mDistance + distance(mCurrent, mLast);
 
-                    //mDistance = distance(mCurrent, mRoute.get(0));
                     mRoute.add(mCurrent);
                     mCurrSpeed = location.getSpeed();
                     //Update TextViews

@@ -122,7 +122,6 @@ public class TripActivity extends AppCompatActivity {
                 trip.put("Route", mTrip.getRoute());
 
                 SharedPreferences myPreferences = getSharedPreferences("name", MODE_PRIVATE);
-                //myPreferences.edit().remove("tripnum").commit();
                 tripnum = myPreferences.getInt("tripnum", 1);
                 SharedPreferences.Editor editor = myPreferences.edit();
                 editor.putInt("tripnum", tripnum+1);

@@ -27,7 +27,6 @@ public class Trip implements Parcelable {
         this.Route = new Vector<Location>(route);
     }
 
-    //Some Parcelable setup that took forever, still don't understand this
     protected Trip(Parcel in){
         Distance = in.readDouble();
         avgSpeed = in.readDouble();
@@ -81,6 +80,5 @@ public class Trip implements Parcelable {
     public String toString() {
         Log.d("Trip", "" + this.Time);
         return "Trip: " + this.Time;
-        //return "";
     }
 }

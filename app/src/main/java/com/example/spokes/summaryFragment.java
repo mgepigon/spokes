@@ -55,8 +55,6 @@ public class summaryFragment extends Fragment {
     //Database
     FirebaseFirestore mDatabase;
 
-    //TODO: setup map to show all locations in route array and draw route using lines?
-    //TODO: change font of textviews for aesthetics
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,7 +67,6 @@ public class summaryFragment extends Fragment {
         mSpeed = (TextView) v.findViewById(R.id.avgSpeedSummary);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapSummary);
 
-
         mDatabase = FirebaseFirestore.getInstance();
         DocumentReference docRef = mDatabase.collection("allTrips").document("current");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -79,7 +76,7 @@ public class summaryFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Map<String, Object> currentTrip = document.getData();
-                        //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
                         mTime.setText("Time Traveled: " + (String) currentTrip.get("TimeTraveled"));
                         mDistance.setText("Distance Traveled: " + getDistance((double) currentTrip.get("DistanceTraveled")));
                         mSpeed.setText("Avg Speed: " + getSpeed((double) currentTrip.get("AvgSpeed")));
@@ -115,8 +112,6 @@ public class summaryFragment extends Fragment {
                                 stylePolyline(polyline1);
                             }
                         });
-
-
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -134,11 +129,6 @@ public class summaryFragment extends Fragment {
     public String getSpeed(double speed){
         //Use activity recognition to get more accurate results (if time permits)
         return String.format(Locale.getDefault(), "%.2f m/s", speed);
-    }
-
-    //Draw Route
-    public void drawRoute(List<LatLng> route){
-
     }
 
     private void stylePolyline(Polyline polyline) {
