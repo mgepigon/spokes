@@ -11,12 +11,14 @@
         <entry key="..\:/Users/marc/Desktop/spokes/app/src/main/res/layout/fragment_summary.xml" value="0.25" />
         <entry key="..\:/Users/marc/Desktop/spokes/app/src/main/res/layout/fragment_trip.xml" value="0.3625" />
         <entry key="..\:/Users/rcpok/Desktop/ECE_251_Apps/spokes/app/src/main/res/layout/activity_maps.xml" value="0.25" />
+        <entry key="..\:/Users/rcpok/Desktop/ECE_251_Apps/spokes/app/src/main/res/layout/activity_trip.xml" value="0.1" />
         <entry key="..\:/Users/rcpok/Desktop/ECE_251_Apps/spokes/app/src/main/res/layout/fragment_summary.xml" value="0.11197916666666667" />
+        <entry key="..\:/Users/rcpok/Desktop/ECE_251_Apps/spokes/app/src/main/res/layout/trip_dialog.xml" value="0.13451086956521738" />
         <entry key="app/src/main/res/layout/activity_maps.xml" value="0.33" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

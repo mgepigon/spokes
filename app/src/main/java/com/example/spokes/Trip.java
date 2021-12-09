@@ -3,8 +3,13 @@ package com.example.spokes;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 //Trip Class (this is what gets put into the database)
@@ -71,5 +76,11 @@ public class Trip implements Parcelable {
     }
     public List<Location> getRoute() {
         return this.Route;
+    }
+    @Override
+    public String toString() {
+        Log.d("Trip", "" + this.Time);
+        return "Trip: " + this.Time;
+        //return "";
     }
 }

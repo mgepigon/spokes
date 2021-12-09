@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +38,7 @@ public class TripActivity extends AppCompatActivity {
 
     //Firebase
     private FirebaseFirestore mDatabase;
+    private int tripnum = 1;
 
     private Trip mTrip;
 
@@ -74,6 +76,8 @@ public class TripActivity extends AppCompatActivity {
                             Log.w(TAG, "Error writing document", e);
                         }
                     });
+
+
         }
 
         //Setup tabs & page adapter
@@ -117,12 +121,20 @@ public class TripActivity extends AppCompatActivity {
                 trip.put("AvgSpeed", mTrip.getAvgSpeed());
                 trip.put("Route", mTrip.getRoute());
 
+                SharedPreferences myPreferences = getSharedPreferences("name", MODE_PRIVATE);
+                //myPreferences.edit().remove("tripnum").commit();
+                tripnum = myPreferences.getInt("tripnum", 1);
+                SharedPreferences.Editor editor = myPreferences.edit();
+                editor.putInt("tripnum", tripnum+1);
+                editor.apply();
+
                 // Add trip to history in allTrips collection
-                mDatabase.collection("allTrips").document("history")
+                mDatabase.collection("allTrips").document("history").collection("historyTrips").document("Trip"+tripnum)// changed from current to history
                         .set(trip)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.w(TAG, "Trip Added");
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -131,6 +143,12 @@ public class TripActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
+                pageAdapter adapter = new pageAdapter(getSupportFragmentManager(),
+                        FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+                adapter.addFragment(new summaryFragment(), "SUMMARY");
+                adapter.addFragment(new historyFragment(), "HISTORY");
+                mViewPager.setAdapter(adapter);
+                mSave.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -154,6 +172,7 @@ public class TripActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error deleting document", e);
                             }
                         });
+                mSave.setVisibility(View.VISIBLE);
                 //Go back to previous activity
                 Intent maps = new Intent(TripActivity.this, MapsActivity.class);
                 startActivity(maps);

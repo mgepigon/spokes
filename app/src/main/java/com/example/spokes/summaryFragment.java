@@ -80,9 +80,9 @@ public class summaryFragment extends Fragment {
                     if (document.exists()) {
                         Map<String, Object> currentTrip = document.getData();
                         //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        mTime.setText((String) currentTrip.get("TimeTraveled"));
-                        mDistance.setText(getDistance((double) currentTrip.get("DistanceTraveled")));
-                        mSpeed.setText(getSpeed((double) currentTrip.get("AvgSpeed")));
+                        mTime.setText("Time Traveled: " + (String) currentTrip.get("TimeTraveled"));
+                        mDistance.setText("Distance Traveled: " + getDistance((double) currentTrip.get("DistanceTraveled")));
+                        mSpeed.setText("Avg Speed: " + getSpeed((double) currentTrip.get("AvgSpeed")));
 
                         mapFragment.getMapAsync(new OnMapReadyCallback() {
                             @Override
