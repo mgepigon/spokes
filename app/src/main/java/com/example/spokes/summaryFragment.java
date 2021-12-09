@@ -1,5 +1,7 @@
 package com.example.spokes;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -38,8 +40,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-/** This fragment handles the creation of a summary interface showing the current trip's route,
- * distance traveled, time taken, and average speed */
 public class summaryFragment extends Fragment {
 
     private static final String TAG = "SummaryFragment" ;
@@ -50,10 +50,11 @@ public class summaryFragment extends Fragment {
 
     SupportMapFragment mapFragment;
 
-    //Route object needed to be filled for recreation on map fragment
     private List<LatLng> mRoute = new ArrayList<>();
 
     private static final int POLYLINE_STROKE_WIDTH_PX = 12;
+
+    private static boolean added;
 
     //Database
     FirebaseFirestore mDatabase;
@@ -70,7 +71,6 @@ public class summaryFragment extends Fragment {
         mSpeed = (TextView) v.findViewById(R.id.avgSpeedSummary);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapSummary);
 
-        //Create summary showing time, distance, and speed
         mDatabase = FirebaseFirestore.getInstance();
         DocumentReference docRef = mDatabase.collection("allTrips").document("current");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -80,12 +80,11 @@ public class summaryFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Map<String, Object> currentTrip = document.getData();
-                        //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
                         mTime.setText("Time Traveled: " + (String) currentTrip.get("TimeTraveled"));
                         mDistance.setText("Distance Traveled: " + getDistance((double) currentTrip.get("DistanceTraveled")));
                         mSpeed.setText("Avg Speed: " + getSpeed((double) currentTrip.get("AvgSpeed")));
 
-                        //Display Map Fragment with route
                         mapFragment.getMapAsync(new OnMapReadyCallback() {
                             @Override
                             public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -111,14 +110,20 @@ public class summaryFragment extends Fragment {
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(midLoc));
                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(midLoc, 15f));
 
-                                Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
-                                        .clickable(false)
-                                        .addAll(mRoute));
-                                stylePolyline(polyline1);
+                                SharedPreferences sp = getContext().getSharedPreferences("sp1", Context.MODE_PRIVATE);
+                                added = sp.getBoolean("added", false);
+                                if(!added) {
+                                    Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+                                            .clickable(false)
+                                            .addAll(mRoute));
+                                    stylePolyline(polyline1);
+                                    added = true;
+                                    SharedPreferences.Editor editor = sp.edit();
+                                    editor.putBoolean("added", added);
+                                    editor.apply();
+                                }
                             }
                         });
-
-
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -130,15 +135,14 @@ public class summaryFragment extends Fragment {
         return v;
     }
 
-    // String conversions of double parameters (for viewing)
     public String getDistance(double distance){
-        return String.format(Locale.getDefault(), "%.2f miles", distance);
+        return String.format(Locale.getDefault(), "%.2f m", distance);
     }
     public String getSpeed(double speed){
-        return String.format(Locale.getDefault(), "%.2f mph", speed);
+        //Use activity recognition to get more accurate results (if time permits)
+        return String.format(Locale.getDefault(), "%.2f m/s", speed);
     }
 
-    //Drawing the route
     private void stylePolyline(Polyline polyline) {
         polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
         polyline.setColor(Color.RED);

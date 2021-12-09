@@ -52,6 +52,11 @@ public class TripActivity extends AppCompatActivity {
         //Connect to Firestore Database of app
         mDatabase = FirebaseFirestore.getInstance();
 
+        SharedPreferences sp = getSharedPreferences("sp1", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("added", false);
+        editor.apply();
+
         if(getIntent().getExtras() != null) {
             mTrip = (Trip) getIntent().getParcelableExtra("savedTrip");
             // Put Current Trip into Firebase for use in Fragments
