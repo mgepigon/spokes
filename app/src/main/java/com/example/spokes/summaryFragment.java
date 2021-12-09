@@ -1,5 +1,7 @@
 package com.example.spokes;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -51,6 +53,8 @@ public class summaryFragment extends Fragment {
     private List<LatLng> mRoute = new ArrayList<>();
 
     private static final int POLYLINE_STROKE_WIDTH_PX = 12;
+
+    private static boolean added;
 
     //Database
     FirebaseFirestore mDatabase;
@@ -106,10 +110,18 @@ public class summaryFragment extends Fragment {
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(midLoc));
                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(midLoc, 15f));
 
-                                Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
-                                        .clickable(false)
-                                        .addAll(mRoute));
-                                stylePolyline(polyline1);
+                                SharedPreferences sp = getContext().getSharedPreferences("sp1", Context.MODE_PRIVATE);
+                                added = sp.getBoolean("added", false);
+                                if(!added) {
+                                    Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+                                            .clickable(false)
+                                            .addAll(mRoute));
+                                    stylePolyline(polyline1);
+                                    added = true;
+                                    SharedPreferences.Editor editor = sp.edit();
+                                    editor.putBoolean("added", added);
+                                    editor.apply();
+                                }
                             }
                         });
                     } else {
