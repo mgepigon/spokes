@@ -38,6 +38,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
+/** This fragment handles the creation of a summary interface showing the current trip's route,
+ * distance traveled, time taken, and average speed */
 public class summaryFragment extends Fragment {
 
     private static final String TAG = "SummaryFragment" ;
@@ -48,6 +50,7 @@ public class summaryFragment extends Fragment {
 
     SupportMapFragment mapFragment;
 
+    //Route object needed to be filled for recreation on map fragment
     private List<LatLng> mRoute = new ArrayList<>();
 
     private static final int POLYLINE_STROKE_WIDTH_PX = 12;
@@ -55,8 +58,6 @@ public class summaryFragment extends Fragment {
     //Database
     FirebaseFirestore mDatabase;
 
-    //TODO: setup map to show all locations in route array and draw route using lines?
-    //TODO: change font of textviews for aesthetics
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class summaryFragment extends Fragment {
         mSpeed = (TextView) v.findViewById(R.id.avgSpeedSummary);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapSummary);
 
-
+        //Create summary showing time, distance, and speed
         mDatabase = FirebaseFirestore.getInstance();
         DocumentReference docRef = mDatabase.collection("allTrips").document("current");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -84,6 +85,7 @@ public class summaryFragment extends Fragment {
                         mDistance.setText("Distance Traveled: " + getDistance((double) currentTrip.get("DistanceTraveled")));
                         mSpeed.setText("Avg Speed: " + getSpeed((double) currentTrip.get("AvgSpeed")));
 
+                        //Display Map Fragment with route
                         mapFragment.getMapAsync(new OnMapReadyCallback() {
                             @Override
                             public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -128,19 +130,15 @@ public class summaryFragment extends Fragment {
         return v;
     }
 
+    // String conversions of double parameters (for viewing)
     public String getDistance(double distance){
-        return String.format(Locale.getDefault(), "%.2f m", distance);
+        return String.format(Locale.getDefault(), "%.2f miles", distance);
     }
     public String getSpeed(double speed){
-        //Use activity recognition to get more accurate results (if time permits)
-        return String.format(Locale.getDefault(), "%.2f m/s", speed);
+        return String.format(Locale.getDefault(), "%.2f mph", speed);
     }
 
-    //Draw Route
-    public void drawRoute(List<LatLng> route){
-
-    }
-
+    //Drawing the route
     private void stylePolyline(Polyline polyline) {
         polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
         polyline.setColor(Color.RED);

@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+/** Main activity showing current location */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     //Maps Objects
@@ -150,12 +151,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else{
                     //Start timer, distance, and speed tracking
 
-                    //Change button color  TODO: make into a stop button
+                    //Change button color
                     mTrack.setImageResource(android.R.drawable.ic_media_pause);
                     mTrack.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
 
                     LatLng latLng = new LatLng(mCurrent.getLatitude(), mCurrent.getLongitude());
                     Log.d ("Camera", "" + mCurrent.getBearing());
+                    //Camera animation along with map UI disable
                     CameraPosition mCamera = new CameraPosition.Builder()
                             .target(latLng)
                             .zoom(18)
@@ -225,7 +227,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /** Map & Location Tracking */
-
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -267,11 +268,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 //TODO: use of activity detection package to detect that we're riding
-                // a bicycle (ON_BICYCLE) for better accuracy
+                // a bicycle (ON_BICYCLE) for better accuracy, if time permits
                 //When tracking make camera follow movement -- store locations into Route, update views
                 if (mTracking){
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    //Change camera position TODO: camera tracking to where phone is facing
+                    //Change camera position to track where person is facing
                     CameraPosition mCamera = new CameraPosition.Builder()
                             .target(latLng)
                             .zoom(18)
@@ -280,20 +281,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .build();
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCamera));
 
-                    //Find speed in m/s & distance from Start
-                    //TODO: distance calculation should be accumulation of each displacement per location,
-                    // right now it's just displacement from current and the start
-                    //verifying completion
+                    //Distance calculation should be accumulation of each displacement per location
                     if(mLast == null) {
-                        mDistance = distance(mCurrent, mRoute.get(0));
+                        mDistance = convertMiles(distance(mCurrent, mRoute.get(0)));
                         Log.d("mTracking", "null");
                     }
                     else
-                        mDistance = mDistance + distance(mCurrent, mLast);
+                        mDistance = mDistance + convertMiles(distance(mCurrent, mLast));
 
-                    //mDistance = distance(mCurrent, mRoute.get(0));
+                    //Add current location to the route along as keeping track of current speed for display
                     mRoute.add(mCurrent);
-                    mCurrSpeed = location.getSpeed();
+                    mCurrSpeed = convertMilesSpeed(location.getSpeed());
                     //Update TextViews
                     mSpeedView.setText(getSpeed(mCurrSpeed));
                     mDistView.setText(getDistance(mDistance));
@@ -306,6 +304,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /** Time Tracker */
     public void timerSetup(){
+        //Create a new thread running the timer in the background
         mTimeHandler = new Handler();
         mTimeHandler.post(new Runnable (){
             @Override
@@ -324,10 +323,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /** String Conversions */
     public String getDistance(double distance){
-        return String.format(Locale.getDefault(), "%.2f m", distance);
+        return String.format(Locale.getDefault(), "%.2f mi", distance);
     }
     public String getSpeed(double speed){
-        return String.format(Locale.getDefault(), "%.2f m/s", speed);
+        return String.format(Locale.getDefault(), "%.2f mph", speed);
     }
     public String getTime(double time){
         mTimeString = String.format(Locale.getDefault(), "%02d:%02d:%02d",
@@ -342,7 +341,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Use mRoute to extract speeds from each location stored
         if (!route.isEmpty()){
             for (Location location: route){
-                result+=location.getSpeed();
+                result+=convertMilesSpeed(location.getSpeed());
             }
             //Find average speed
             return result/route.size();
@@ -351,14 +350,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Converters --> can be used in a settings feature that can change units
-    private double convertMiles(double meters){
-        return meters*.000621371;
+    private double convertMilesSpeed(double meters){
+        return meters*2.23694;
     }
-    private double convertMeters(double miles){
-        return miles/1609.34;
+    private double convertMiles(double meters) {return meters/1609.34;}
+    private double convertMetersSpeed(double miles){
+        return miles/2.23694;
     }
+    private double convertMeters(double miles){return miles*1609.34;}
 
-    //Calculate Distance (in meters)
+    //Calculate Distance
     public double distance(Location to, Location from){
         return to.distanceTo(from);
     }

@@ -37,9 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** This fragment handles showing past trips along with selection, pulling data from Firestore */
 public class historyFragment extends Fragment {
-    //TODO setup a scrollable listview and grab history from Firestore
-
     private static final String TAG = "HistoryFragment" ;
 
     //History List
@@ -53,14 +52,11 @@ public class historyFragment extends Fragment {
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
 
-    SupportMapFragment mapFragment;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_history, container, false);
-        //View sum = inflater.inflate(R.layout.fragment_summary, container, false);
 
         mDatabase = FirebaseFirestore.getInstance();
 
@@ -70,7 +66,7 @@ public class historyFragment extends Fragment {
         adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, mTripArray);
         mHistoryList.setAdapter(adapter);
 
-        //Create history list TODO: Change name of each entry to something that makes sense
+        //Create history list
         loadHistory();
 
         mHistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -79,40 +75,18 @@ public class historyFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Creates current view of trip selected
                 Trip trip = mTripArray.get(position);
-                Double dist = BigDecimal.valueOf(trip.getDistance())
+                double dist = BigDecimal.valueOf(trip.getDistance())
                         .setScale(3, RoundingMode.HALF_UP)
                         .doubleValue();
-                Double speed = BigDecimal.valueOf(trip.getAvgSpeed())
+                double speed = BigDecimal.valueOf(trip.getAvgSpeed())
                         .setScale(3, RoundingMode.HALF_UP)
                         .doubleValue();
                 builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Time Traveled: " + trip.getTime() + "\n" + "Distance Traveled: " + dist + " m\n" + "Avg Speed: " + speed + " m/s");
+                builder.setMessage("Time Traveled: " + trip.getTime() + "\n" + "Distance Traveled: " + dist + " mi\n" + "Avg Speed: " + speed + " mph");
                 dialog = builder.create();
                 dialog.show();
 
-                /*mTime.setText(trip.getTime());
-                mDistance.setText(""+trip.getDistance());
-                mSpeed.setText(""+trip.getAvgSpeed());*/
-
-                //TripDialogFragment dialog = new TripDialogFragment ();
-                //FragmentManager fragmentManager = getFragmentManager();
-                //dialog.show(fragmentManager, "dialog");
-                //dialog.show
-                //new TripDialogFragment().show(getActivity().getSupportFragmentManager(), null);
-
-                /*Fragment newSumFragment = new summaryFragment();
-                // consider using Java coding conventions (upper first char class names!!!)
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack
-                transaction.replace(R.layout.fragment_summary, newSumFragment);
-                transaction.addToBackStack(null);
-
-                // Commit the transaction
-                transaction.commit();*/
-                //Add the current trip to allTrips collection
-                //TODO: Come up with a way of showing the selected location (either put it in summary or open a new activity? or dialog box?
+                //Selected trip is accounted for in database
                 mDatabase.collection("allTrips").document("selected")
                         .set(trip)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -131,6 +105,7 @@ public class historyFragment extends Fragment {
         return v;
     }
 
+    //Load history of trips into page adapter
     public void loadHistory(){
         CollectionReference collRef = mDatabase.collection("allTrips").document("history").collection("historyTrips");
         collRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -140,7 +115,6 @@ public class historyFragment extends Fragment {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         if (document.exists()) {
-                            //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                             Map<String, Object> currentTrip = document.getData();
                             //Add trip to Trip array so it shows up as one of the entries in the list adapter
                             Trip trip = new Trip((double)currentTrip.get("DistanceTraveled"), (double) currentTrip.get("AvgSpeed"),
@@ -156,27 +130,5 @@ public class historyFragment extends Fragment {
                 }
             }
         });
-        /*DocumentReference docRef = mDatabase.collection("allTrips").document("history");
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Map<String, Object> currentTrip = document.getData();
-                        //Add trip to Trip array so it shows up as one of the entries in the list adapter
-                        Trip trip = new Trip((double)currentTrip.get("DistanceTraveled"), (double) currentTrip.get("AvgSpeed"),
-                                (String) currentTrip.get("TimeTraveled"), (List<Location>) currentTrip.get("Route"));
-                        mTripArray.add(trip);
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    */}
+    }
 }

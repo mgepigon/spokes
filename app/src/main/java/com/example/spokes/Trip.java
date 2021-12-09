@@ -27,7 +27,7 @@ public class Trip implements Parcelable {
         this.Route = new Vector<Location>(route);
     }
 
-    //Some Parcelable setup that took forever, still don't understand this
+    //Parcelable set up so that the custom object Trip can be passed as an Intent extra
     protected Trip(Parcel in){
         Distance = in.readDouble();
         avgSpeed = in.readDouble();
@@ -81,6 +81,5 @@ public class Trip implements Parcelable {
     public String toString() {
         Log.d("Trip", "" + this.Time);
         return "Trip: " + this.Time;
-        //return "";
     }
 }

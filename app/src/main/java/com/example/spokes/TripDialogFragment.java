@@ -14,6 +14,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/** This fragment handles the creation of a Dialog box on top of the history fragment
+ * when selecting a past trip */
 public class TripDialogFragment extends DialogFragment
         implements OnMapReadyCallback{
     GoogleMap mMap;
@@ -30,7 +32,6 @@ public class TripDialogFragment extends DialogFragment
         getDialog().setTitle("simple dialog");
         SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
         return rootView;
     }
 
@@ -48,4 +49,4 @@ public class TripDialogFragment extends DialogFragment
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mMap.addMarker(markerOptions);
     }
-        }
+}
